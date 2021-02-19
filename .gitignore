@@ -1,0 +1,7 @@
+__pycache__/
+.deta/
+log
+node_modules/
+package-lock.json
+data
+.envrc
