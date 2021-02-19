@@ -93,3 +93,4 @@ def delete_todo(id: int):
         return HTTPException(404, "Todo not found")
 
     del todos[id]
+    save_todos(todos)
