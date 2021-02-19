@@ -7,10 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.responses import HTMLResponse
 
-try:
-    from helper import *
-except ImportError:
-    from .helper import *
+from helper import *
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
