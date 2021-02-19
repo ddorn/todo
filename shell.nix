@@ -17,6 +17,7 @@ let
 in
 mkShell {
   buildInputs = [
+    heroku
     customPython
     my-pkgs.nodejs
     my-pkgs.nodePackages.npm
@@ -24,6 +25,5 @@ mkShell {
 
   shellHook = ''
     export PATH="$PATH:$HOME/prog/therandom.space/node_modules/.bin"
-    export PATH="/home/diego/.deta/bin:$PATH"
   '';
 }
