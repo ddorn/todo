@@ -4,8 +4,8 @@ module.exports = {
     purge: {
         // enabled: false,
         content: [
-            'templates/**/*.html',
-            'templates/*.html'
+            'website/templates/**/*.html',
+            'website/templates/*.html'
         ]
     },
     darkMode: false, // or 'media' or 'class'
@@ -36,6 +36,15 @@ module.exports = {
                 8: 'rgba(255, 255, 255, 0.12)',
                 16: 'rgba(255, 255, 255, 0.14)',
                 24: 'rgba(255, 255, 255, 0.16)',
+            },
+            red: {
+                200: '#ffa290',
+            },
+            blue: {
+                200: '#6fcdff',
+            },
+            green: {
+                200: '#cdff7c',
             }
         },
         screens: {

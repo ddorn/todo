@@ -1,3 +1,4 @@
+import os
 import json
 import random
 from operator import attrgetter, itemgetter
@@ -5,10 +6,12 @@ from pathlib import Path
 from typing import Dict, List
 import yaml
 
-DATA = Path(__file__).parent / "data"
+TOP_DIR = Path(__file__).parent
+DATA = TOP_DIR / "data"
 CONFIG_FILE = DATA / 'config.json'
 TODO_FILE = DATA / 'todos.yaml'
 
+os.chdir(TOP_DIR)
 
 def get_config(key):
     return json.loads(CONFIG_FILE.read_text())[key]
