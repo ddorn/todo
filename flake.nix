@@ -11,6 +11,7 @@
   with nixpkgs.legacyPackages.${system};
   let
     pythonEnv = python38.withPackages(ps: with ps; [
+      sqlalchemy
       fastapi
       uvicorn
     ]);

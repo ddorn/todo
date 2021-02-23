@@ -1,13 +1,23 @@
 """
 """
-from typing import Dict, Optional
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.templating import Jinja2Templates
+import os
+from typing import List
+
+from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 from starlette.responses import HTMLResponse
 
-from helper import *
+import crud
+import models
+import shemas
+from constants import *
+from database import engine, get_db
+
+os.chdir(TOP_DIR)
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -30,67 +40,47 @@ def home(request: Request):
 
 # ####################### API ####################### #
 
-class Todo(BaseModel):
-    name: str
-    categ: str
-    done: bool
-    id: Optional[int] = 0
+@app.get("/api/list", response_model=List[shemas.TodoList])
+def get_all_todolists(db = Depends(get_db)):
+    return crud.get_all_lists(db)
+
+@app.post("/api/list", response_model=shemas.TodoList)
+def create_todolist(list: shemas.TodoListCreate, db = Depends(get_db)):
+    return crud.create_list(db, list)
 
 
-class PartialTodo(BaseModel):
-    name: Optional[str]
-    categ: Optional[str]
-    done: Optional[bool]
+@app.get("/api/list/{id}", response_model=List[shemas.Todo])
+def get_all_todos(id: int, db: Session = Depends(get_db)):
+    """Get all the todos in the list."""
+    db_list = crud.get_list(db, id)
+    if db_list is None:
+        return []
+    return db_list.todos
 
 
-@app.get("/api")
-def get_all_todos():
-    """Get all the todos."""
-    return list(load_todos().values())
+@app.post("/api/list/{id}", response_model=shemas.Todo)
+def create_todo(id: int, todo: shemas.TodoCreate, db = Depends(get_db)):
+    return crud.create_todo(db, todo, id)
+
+@app.get("/api/todo/{id}", response_model=shemas.Todo)
+def get_single_todo(id: int, db: Session = Depends(get_db)):
+    db_todo = crud.get_todo(db, id)
+    if db_todo is None:
+        raise HTTPException(404, "Todo not found")
+    return db_todo
 
 
-@app.post("/api", response_model=Todo)
-def create_new_todo(todo: Todo):
-    """Create a new to-do. The system ID is in the response."""
-    todos = load_todos()
-    new_id = max(todos, default=-1) + 1
-    todo.id = new_id
-    todos[new_id] = todo.dict()
-
-    save_todos(todos)
-
-    return todo
-
-
-@app.get("/api/todo/{id}", response_model=Todo)
-def get_single_todo(id: int):
-    todos = load_todos()
-    if id not in todos:
-        return HTTPException(404, "Todo not found")
-    return todos[id]
-
-
-@app.patch("/api/todo/{id}", response_model=Todo)
-def update_todo(id: int, todo: PartialTodo):
+@app.patch("/api/todo/{id}", response_model=shemas.Todo)
+def update_todo(id: int, todo: shemas.PartialTodo, db: Session = Depends(get_db)):
     """Modify an existing to-do."""
-    todos = load_todos()
-    if id not in todos:
-        return HTTPException(404, "Todo not found")
-
-    saved_todo = todos[id]
-    new_values = todo.dict(exclude_unset=True)
-    saved_todo.update(**new_values)
-
-    save_todos(todos)
-    return saved_todo
+    updated = crud.update_todo(db, id, todo)
+    if updated is None:
+        raise HTTPException(404, "Todo not found")
+    return updated
 
 
 @app.delete("/api/todo/{id}")
-def delete_todo(id: int):
+def delete_todo(id: int, db: Session = Depends(get_db)):
     """Delete an existing to-do."""
-    todos = load_todos()
-    if id not in todos:
+    if not crud.delete_todo(db, id):
         return HTTPException(404, "Todo not found")
-
-    del todos[id]
-    save_todos(todos)
