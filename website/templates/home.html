@@ -1,147 +1,33 @@
 {% extends "layouts/base.html" %}
-{% from "macros/macros.html" import icon %}
 
 {% block body %}
-<script src="https://unpkg.com/vue@3.0.5"></script>
-<div id="app" class="flex flex-col min-h-screen min-w-screen">
-    <h1 class="p-4 text-2xl bg-orange-500 shadow-lg mb-6">Liste de courses</h1>
+    <div id="app">
+        <h1 class="p-4 text-2xl bg-orange-500 shadow-lg mb-6">LOL</h1>
 
-    <div v-for="(group, name) in shopByCateg" class="pb-4" :key="name">
-        <h2 class="text-xl px-4">[[ name ]]</h2>
-        <ul class="list-disc list-inside">
-            <shop-item v-for="item in group" :item="item" :key="item.id"></shop-item>
+        <ul>
+            <li v-for="list in lists">[[ list ]]</li>
         </ul>
+
     </div>
+    <script>
+        'use strict';
 
-    <div class="self-center p-4 w-96 flex flex-col items-center">
-        <h2 class="text-xl p-4">Ajouter un objet</h2>
-        <div class="flex pb-2 w-full">
-            <label for="category-select">Catégorie</label>
-            <select ref="catSelect" class="ml-2 flex-grow border" id="category-select" name="category" v-model="addCateg">
-                <option v-for="cat in categories" :value="cat">[[ cat ]]</option>
-                <option value="-OTHER-">Nouvelle catégorie</option>
-            </select>
-        </div>
-        <input class="mb-2 px-1 border w-full" placeholder="Nouvelle catégorie..." id="category-select" v-if="addCateg === '-OTHER-'" v-model="addCategAutre" type="text">
-
-        <div class="flex pb-2 w-full">
-            <label for="name-input">Nom</label>
-            <input id="name-input" type="text" class="ml-2 flex-grow border" v-model="addName">
-        </div>
-        <button class="rounded-full bg-gray-300 px-4 py-2"
-            v-on:click="addItem">Ajouter</button>
-    </div>
-</div>
-
-<script>
-    'use strict';
-
-    function newItem(name, categ) {
-        return {
-            name, categ,
-            done: false,
-            id: null,
-        }
-    }
-
-    const Counter = {
-        data() {
-            return {
-                shop: [],
-                addCateg: '',
-                addName: '',
-                addCategAutre: '',
-                listId: 1,
-            }
-        },
-        computed: {
-            shopByCateg() {
-                let groups = {};
-                this.shop.forEach(item => {
-                    if (item.categ in groups) {
-                        groups[item.categ].push(item);
-                    } else {
-                        groups[item.categ] = [item];
-                    }
-                });
-                for (const group in groups) {
-                    console.log(group)
-                    groups[group].sort((a, b) => {
-                        let ddone = a.done - b.done;
-                        return ddone !== 0 ? ddone : a.name > b.name ? 1 : -1;
+        const App = {
+            data() { return {
+                lists: [],
+            }},
+            methods: {
+                updateLists() {
+                    fetch("/api/list/").then(resp => {
+                        if (resp.ok) {
+                            resp.json().then(d => this.lists = d):
+                        } else {
+                            this.showError(resp.details);
+                        }
                     })
                 }
-                return groups;
             },
-            categories() {
-                return new Set(this.shop.map(item => item.categ))
-            }
-        },
-        methods: {
-            addItem() {
-                let cat = this.addCateg === "-OTHER-" ? this.addCategAutre : this.addCateg;
-                let name = this.addName;
-                if (!cat || !name) return;
-                let item = { name, categ: cat, done: false}
-                fetch(`/api/list/${this.listId}`, {
-                    method: 'post',
-                    body: JSON.stringify(item),
-                }).then(resp => resp.json()
-                    .then(data => {
-                        item.id = data.id;
-                        this.shop.push(item);
-                        this.addName = '';
-                    }))
-            }
-        },
-        created() {
-            fetch(`/api/list/${this.listId}`).then(resp => resp.json().then(data => this.shop = data))
-        },
-        delimiters: ['[[', ']]'],
-    }
-
-    const vm = Vue.createApp(Counter);
-    vm.component('shop-item', {
-        props: ['item'],
-        data() { return {
-            editing: false,
-            editedName: this.item.name,
-        }},
-        methods: {
-            toggleDone() {
-                fetch(`/api/todo/${this.item.id}`, {
-                    method: 'PATCH',
-                    body: JSON.stringify({ done: !this.item.done})
-                }).then(resp => {if (resp.ok) this.item.done = !this.item.done})
-
-            },
-            toggleEdit() {
-                this.editing = !this.editing;
-                if (this.editing) setTimeout(() => this.$refs.input.focus(), 1);
-            },
-            edit() {
-                fetch(`/api/todo/${this.item.id}`, {
-                    method: "PATCH",
-                    body: JSON.stringify({ name: this.editedName })
-                }).then(resp => {if (resp.ok) this.item.name = this.editedName})
-            }
-        },
-        template: `
-        <li class="py-1 px-3 flex justify-between items-center bg-white shadow m-2 rounded-lg" :class="{'text-gray-500 line-through': item.done}">
-            <button @click="toggleDone" class="rounded border-2 border-orange-200 w-6 h-6 mr-4" :class="{'text-gray-300': !item.done}">
-                {{ icon('check', "h-6 pb-1") }}
-            </button>
-            <span class="justify-self-start flex-grow">
-                <input v-if="editing" ref="input" class="pr-1 text-gray-600 w-min" v-model="editedName" @change="edit" @focusout="editing = false" :size="editedName.length" type="text"/>
-                <span v-else @click="toggleEdit" >[[ item.name ]]</span>
-<!--                <button class="text-gray-500 w-auto" @click="toggleEdit">{{ icon('pen') }}</button>-->
-            </span>
-            <span>[[ item.categ ]]</span>
-        </li>
-        `,
-        delimiters: ['[[', ']]'],
-    })
-
-    vm.mount('#app')
-</script>
+            created() { this.updateLists(); },
+        }
+    </script>
 {% endblock %}
