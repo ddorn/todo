@@ -35,14 +35,14 @@ def template(name, request, **kwargs):
 
 @app.get("/", response_class=HTMLResponse, tags=['Webpages'])
 def home(request: Request):
-    return template('list.html', request, title="Liste de courses")
+    return template('home.html', request, title="Liste de courses")
 
 
 # ####################### API ####################### #
 
 list_router = APIRouter(prefix='/list', tags=['Todo Lists'])
 
-@list_router.get("/", response_model=List[shemas.TodoList])
+@list_router.get("/", response_model=List[shemas.TodoListMetaData])
 def get_all_todolists(db = Depends(get_db)):
     return crud.get_all_lists(db)
 

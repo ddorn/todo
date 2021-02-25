@@ -40,3 +40,11 @@ class TodoList(BaseModel):
     class Config:
         orm_mode = True
 
+class TodoListMetaData(BaseModel):
+    id: int
+    title: str
+    description: Optional[str] = ""
+
+    class Config:
+        orm_mode = True
+
