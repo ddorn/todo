@@ -946,6 +946,10 @@ video {
   text-align: center;
 }
 
+.text-right {
+  text-align: right;
+}
+
 .text-black {
   --tw-text-opacity: 1;
   color: rgba(0, 0, 0, var(--tw-text-opacity));
@@ -1247,7 +1251,7 @@ a {
     width: 20rem;
   }
 
-  .md\:w-2\/4 {
+  .md\:w-1\/2 {
     width: 50%;
   }
 
