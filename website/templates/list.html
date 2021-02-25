@@ -5,6 +5,8 @@
 <div id="app" class="flex flex-col min-h-screen min-w-screen">
     <h1 class="p-4 text-2xl bg-orange-500 shadow-lg mb-6">Liste de courses</h1>
 
+    <add-bar @new-item="shop.push($event)" :categories="categories" :listid="listId"></add-bar>
+
     <div v-for="(group, name) in shopByCateg" class="pb-4" :key="name">
         <h2 class="text-xl px-4">[[ name ]]</h2>
         <ul class="list-disc list-inside">
@@ -12,24 +14,6 @@
         </ul>
     </div>
 
-    <div class="self-center p-4 w-96 flex flex-col items-center">
-        <h2 class="text-xl p-4">Ajouter un objet</h2>
-        <div class="flex pb-2 w-full">
-            <label for="category-select">Catégorie</label>
-            <select ref="catSelect" class="ml-2 flex-grow border" id="category-select" name="category" v-model="addCateg">
-                <option v-for="cat in categories" :value="cat">[[ cat ]]</option>
-                <option value="-OTHER-">Nouvelle catégorie</option>
-            </select>
-        </div>
-        <input class="mb-2 px-1 border w-full" placeholder="Nouvelle catégorie..." id="category-select" v-if="addCateg === '-OTHER-'" v-model="addCategAutre" type="text">
-
-        <div class="flex pb-2 w-full">
-            <label for="name-input">Nom</label>
-            <input id="name-input" type="text" class="ml-2 flex-grow border" v-model="addName">
-        </div>
-        <button class="rounded-full bg-gray-300 px-4 py-2"
-            v-on:click="addItem">Ajouter</button>
-    </div>
 </div>
 
 <script>
@@ -43,13 +27,10 @@
         }
     }
 
-    const Counter = {
+    const App = {
         data() {
             return {
                 shop: [],
-                addCateg: '',
-                addName: '',
-                addCategAutre: '',
                 listId: 1,
             }
         },
@@ -64,7 +45,6 @@
                     }
                 });
                 for (const group in groups) {
-                    console.log(group)
                     groups[group].sort((a, b) => {
                         let ddone = a.done - b.done;
                         return ddone !== 0 ? ddone : a.name > b.name ? 1 : -1;
@@ -77,21 +57,6 @@
             }
         },
         methods: {
-            addItem() {
-                let cat = this.addCateg === "-OTHER-" ? this.addCategAutre : this.addCateg;
-                let name = this.addName;
-                if (!cat || !name) return;
-                let item = { name, categ: cat, done: false}
-                fetch(`/api/list/${this.listId}`, {
-                    method: 'post',
-                    body: JSON.stringify(item),
-                }).then(resp => resp.json()
-                    .then(data => {
-                        item.id = data.id;
-                        this.shop.push(item);
-                        this.addName = '';
-                    }))
-            },
             updateShop() {
                 fetch(`/api/list/${this.listId}`).then(resp => resp.json().then(d => this.shop = d))
             }
@@ -100,7 +65,8 @@
         delimiters: ['[[', ']]'],
     }
 
-    const vm = Vue.createApp(Counter);
+    const vm = Vue.createApp(App);
+
     vm.component('shop-item', {
         props: ['item'],
         data() { return {
@@ -113,7 +79,6 @@
                     method: 'PATCH',
                     body: JSON.stringify({ done: !this.item.done})
                 }).then(resp => {if (resp.ok) this.item.done = !this.item.done})
-
             },
             toggleEdit() {
                 this.editing = !this.editing;
@@ -142,6 +107,54 @@
         delimiters: ['[[', ']]'],
     })
 
+    vm.component('add-bar', {
+        props: ['categories', 'listid'],
+        emits: ['new-item'],
+        data() { return {
+            addCateg: '',
+            addName: '',
+            addCategAutre: '',
+        }},
+        methods: {
+            addItem() {
+                let cat = this.addCateg === "-OTHER-" ? this.addCategAutre : this.addCateg;
+                let name = this.addName;
+                if (!cat || !name) return;
+                let item = { name, categ: cat, done: false}
+                fetch(`/api/list/${this.listid}`, {
+                    method: 'post',
+                    body: JSON.stringify(item),
+                }).then(resp => resp.json()
+                    .then(data => {
+                        item.id = data.id;
+                        this.$emit('new-item', item)
+                        this.addName = '';
+                    }))
+            },
+        },
+        template: `
+<form action="#" class="p-4 flex items-center flex-col md:flex-row space-y-2 md:space-y-0">
+    <div class="flex w-min">
+        <select ref="catSelect" class="ml-2 flex-grow border w-min" id="category-select" name="category" v-model="addCateg">
+            <option value="" disabled selected hidden>Category</option>
+            <option v-for="cat in categories" :value="cat">[[ cat ]]</option>
+            <option value="-OTHER-">Nouvelle catégorie</option>
+        </select>
+    </div>
+    <input class="border w-full flex-grow" placeholder="Nouvelle catégorie..." id="category-select" v-if="addCateg === '-OTHER-'" v-model="addCategAutre" type="text">
+
+    <div class="flex flex-grow w-full">
+        <div class="flex w-full h-6">
+            <input type="text" class="flex-grow border" v-model="addName">
+        </div>
+        <button type="submit" class="rounded-r bg-orange-300 text-center"
+            v-on:click="addItem">{{ icon('plus', 'h-5 px-2 py-1') }}</button>
+    </div>
+</form>`,
+            delimiters: ['[[', ']]'],
+        }
+
+    )
     vm.mount('#app');
 </script>
 {% endblock %}
