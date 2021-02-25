@@ -1247,8 +1247,12 @@ a {
     width: 20rem;
   }
 
-  .md\:w-1\/2 {
+  .md\:w-2\/4 {
     width: 50%;
+  }
+
+  .md\:w-min {
+    width: min-content;
   }
 }
 

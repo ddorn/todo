@@ -10,15 +10,16 @@
 
     <div class="mb-4 text-2xl p-4"> </div>  <!-- Same size as the top bar -->
 
-    <div v-if="listId === null" class="flex flex-col space-y-4 px-4 md:w-1/2 self-center">
-        <a @click="listId = list.id" v-for="list in lists" class="cursor-pointer p-4 w-full rounded-xl shadow-lg bg-orange-100 hover:scale-105 transform transition">
-            <div class="text-xl px-4">[[ list.title ]]</div>
-            <p class="px-4 text-gray-700">[[ list.description ]]</p>
-        </a>
+    <div class="p-4 w-full h-full flex flex-col md:w-1/2 self-center">
+        <div v-if="listId === null" class="flex flex-col space-y-4 px-4 self-center">
+            <a @click="listId = list.id" v-for="list in lists" class="cursor-pointer p-4 w-full rounded-xl shadow-lg bg-orange-100 hover:scale-105 transform transition">
+                <div class="text-xl px-4">[[ list.title ]]</div>
+                <p class="px-4 text-gray-700">[[ list.description ]]</p>
+            </a>
+        </div>
+
+        <todo-list v-else :list-id="listId"></todo-list>
     </div>
-
-    <todo-list v-else :list-id="listId"></todo-list>
-
 </div>
 
 <script>
@@ -131,8 +132,8 @@
             },
         },
         template: `
-<form :onsubmit="addItem" class="px-4 flex items-center flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
-    <select ref="catSelect" class="px-1 flex-grow border w-min h-8" id="category-select" name="category" v-model="addCateg">
+<form :onsubmit="addItem" class="flex items-center flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+    <select ref="catSelect" class="px-1 flex-grow w-full border md:w-min h-8" id="category-select" name="category" v-model="addCateg">
         <option value="" disabled selected hidden>Category</option>
         <option v-for="cat in categories" :value="cat">[[ cat ]]</option>
         <option value="-OTHER-">Nouvelle catégorie</option>
@@ -190,7 +191,7 @@
 <div>
     <add-bar @new-item="shop.push($event)" :categories="categories" :listid="listId" class="pb-4"></add-bar>
 
-    <div v-for="(group, name) in shopByCateg" class="pb-4 px-4" :key="name">
+    <div v-for="(group, name) in shopByCateg" class="pb-4" :key="name">
         <h2 class="text-xl">[[ name ]]</h2>
         <ul>
             <shop-item v-for="item in group" :item="item" :key="item.id"></shop-item>
