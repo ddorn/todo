@@ -3,12 +3,14 @@
 
 {% block body %}
 <div id="app" class="flex flex-col min-h-screen min-w-screen">
-    <h1 class="p-4 text-2xl bg-orange-500 shadow-lg mb-6">
+    <h1 class="p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden">
         <button @click="listId = null" v-if="listId !== null" class="pr-1">{{ icon('left-arrow', 'h-6 text-gray-700 pb-1') }}</button>
         [[ title ]]
     </h1>
 
-    <div v-if="listId === null" class="flex flex-col space-y-4 p-4 md:w-1/2 self-center">
+    <div class="mb-4 text-2xl p-4"> </div>  <!-- Same size as the top bar -->
+
+    <div v-if="listId === null" class="flex flex-col space-y-4 px-4 md:w-1/2 self-center">
         <a @click="listId = list.id" v-for="list in lists" class="cursor-pointer p-4 w-full rounded-xl shadow-lg bg-orange-100 hover:scale-105 transform transition">
             <div class="text-xl px-4">[[ list.title ]]</div>
             <p class="px-4 text-gray-700">[[ list.description ]]</p>
@@ -83,7 +85,7 @@
             }
         },
         template: `
-        <li class="py-1 px-3 flex justify-between items-center bg-white shadow m-2 rounded-lg" :class="{'text-gray-500 line-through': item.done}">
+        <li class="py-1 px-2 flex justify-between items-center bg-white shadow my-2 rounded-md" :class="{'text-gray-500 line-through': item.done}">
             <button @click="toggleDone" class="rounded border-2 border-orange-200 w-6 h-6 mr-4" :class="{'text-gray-300': !item.done}">
                 {{ icon('check', "h-6 pb-1") }}
             </button>
@@ -109,7 +111,8 @@
         methods: {
             addItem(event) {
                 if (event) event.preventDefault();  // Don't submit the form and change page
-                let cat = this.addCateg === "-OTHER-" ? this.addCategAutre : this.addCateg;
+                let isNewCat = (this.addCateg === "-OTHER-")
+                let cat = isNewCat ? this.addCategAutre : this.addCateg;
                 let name = this.addName;
                 if (!cat || !name) return;
                 let item = { name, categ: cat, done: false}
@@ -122,25 +125,27 @@
                         this.$emit('new-item', item)
                         this.addName = '';
                     }))
+                if (isNewCat) {
+                    this.addCateg = this.addCategAutre;
+                }
             },
         },
         template: `
-<form :onsubmit="addItem" class="p-4 flex items-center flex-col md:flex-row space-y-2 md:space-y-0">
-    <div class="flex w-min">
-        <select ref="catSelect" class="ml-2 flex-grow border w-min" id="category-select" name="category" v-model="addCateg">
-            <option value="" disabled selected hidden>Category</option>
-            <option v-for="cat in categories" :value="cat">[[ cat ]]</option>
-            <option value="-OTHER-">Nouvelle catégorie</option>
-        </select>
-    </div>
-    <input class="border w-full flex-grow" placeholder="Nouvelle catégorie..." id="category-select" v-if="addCateg === '-OTHER-'" v-model="addCategAutre" type="text">
+<form :onsubmit="addItem" class="px-4 flex items-center flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+    <select ref="catSelect" class="px-1 flex-grow border w-min h-8" id="category-select" name="category" v-model="addCateg">
+        <option value="" disabled selected hidden>Category</option>
+        <option v-for="cat in categories" :value="cat">[[ cat ]]</option>
+        <option value="-OTHER-">Nouvelle catégorie</option>
+    </select>
+
+    <input class="border w-full h-8 flex-grow px-2" placeholder="Nouvelle catégorie..." id="category-select" v-if="addCateg === '-OTHER-'" v-model="addCategAutre" type="text">
 
     <div class="flex flex-grow w-full">
-        <div class="flex w-full h-6">
-            <input type="text" class="flex-grow border" v-model="addName">
+        <div class="flex w-full h-8">
+            <input type="text" class="flex-grow border px-2" v-model="addName">
         </div>
         <button type="submit" class="rounded-r bg-orange-300 text-center"
-            v-on:click="addItem">{{ icon('plus', 'h-5 px-2 py-1') }}</button>
+            v-on:click="addItem">{{ icon('plus', 'h-7 px-2 py-1') }}</button>
     </div>
 </form>`,
             delimiters: ['[[', ']]'],
@@ -182,14 +187,17 @@
         created() { this.updateShop(); },
         delimiters: ['[[', ']]'],
         template: `
-    <add-bar @new-item="shop.push($event)" :categories="categories" :listid="listId"></add-bar>
+<div>
+    <add-bar @new-item="shop.push($event)" :categories="categories" :listid="listId" class="pb-4"></add-bar>
 
-    <div v-for="(group, name) in shopByCateg" class="pb-4" :key="name">
-        <h2 class="text-xl px-4">[[ name ]]</h2>
-        <ul class="list-disc list-inside">
+    <div v-for="(group, name) in shopByCateg" class="pb-4 px-4" :key="name">
+        <h2 class="text-xl">[[ name ]]</h2>
+        <ul>
             <shop-item v-for="item in group" :item="item" :key="item.id"></shop-item>
         </ul>
-    </div>`,
+    </div>
+</div>
+`,
 
     })
     vm.mount('#app');
