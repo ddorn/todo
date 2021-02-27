@@ -4,7 +4,8 @@
   },
   "devDependencies": {
     "autoprefixer": "10.2.4",
-    "tailwindcss": "^2.0.0"
+    "tailwindcss": "^2.0.0",
+    "tailwindcss-multi-column": "^1.0.2"
   },
   "scripts": {
     "tw-dev": "tailwind build website/static/source.css -o website/static/style.css -c tailwind.config.js --no-autoprefixer",

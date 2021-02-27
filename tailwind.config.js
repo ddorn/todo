@@ -54,6 +54,12 @@ module.exports = {
             'xl': '1280px',
             // '2xl': '1536px',
         },
+        columnWidth: {
+            sm: '120px',
+            md: '240px',
+            lg: '360px',
+            xl: '480px',
+        },
         extend: {
             colors: {
                 gray: {
@@ -70,5 +76,8 @@ module.exports = {
             backgroundColor: ['odd'],
             zIndex: ['hover'],
         },
-    }
+    },
+    plugins: [
+        require('tailwindcss-multi-column')(),
+    ]
 }
