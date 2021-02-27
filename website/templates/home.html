@@ -212,7 +212,7 @@
                 <input v-if="editing" ref="input" class="pr-1 text-gray-600" v-model="editedName" @change="edit" @focusout="editing = false" :size="Math.min(27, editedName.length)" type="text"/>
                 <span v-else @click="toggleEdit" class="h-6" >[[ item.name ]]</span>
             </span>
-            <button @click="toggleStar" class="w-6 h-6 flex-shrink-0" :class="{'text-gray-300': !item.done}">
+            <button @click="toggleStar" class="w-6 h-6 flex-shrink-0 text-gray-300">
                 <span v-if="item.important" :class="item.done ? 'text-gray-300' : 'text-orange-300'">{{ icon('star', "h-6 pb-1", True) }}</span>
                 <span v-else class="texor">{{ icon('star', "h-6 pb-1", False) }}</span>
             </button>
