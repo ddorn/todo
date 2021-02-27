@@ -895,8 +895,8 @@ video {
   padding-bottom: 0.25rem;
 }
 
-.pr-4 {
-  padding-right: 1rem;
+.pr-2 {
+  padding-right: 0.5rem;
 }
 
 .pb-4 {
@@ -1265,8 +1265,18 @@ a {
     margin: 1.5rem;
   }
 
-  .md\:p-4 {
-    padding: 1rem;
+  .md\:py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .md\:px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .md\:pr-4 {
+    padding-right: 1rem;
   }
 
   .md\:absolute {
@@ -1277,8 +1287,8 @@ a {
     top: 0px;
   }
 
-  .md\:-left-10 {
-    left: -2.5rem;
+  .md\:-left-14 {
+    left: -3.5rem;
   }
 
   .md\:w-80 {
@@ -1308,8 +1318,8 @@ a {
     transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 
-  .md\:hover\:translate-x-12:hover {
-    --tw-translate-x: 3rem;
+  .md\:hover\:translate-x-14:hover {
+    --tw-translate-x: 3.5rem;
   }
 
   .md\:transition {
