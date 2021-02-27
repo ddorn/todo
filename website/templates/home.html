@@ -4,11 +4,11 @@
 {% block body %}
 <div id="app" class="flex flex-col min-h-screen min-w-screen items-center">
     <nav class="flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden">
-        <div :class="{'md:hover:translate-x-12 md:transform md:transition md:absolute md:-left-12 md:top-0 md:p-4 flex': listId !== null}">
-            <button @click="listId = null" v-if="listId !== null" class="px-2 md:mr-2 hover:bg-orange-100 rounded-full">
-                {{ icon('left-arrow', 'h-6 text-gray-700 pb-1') }}
+        <div :class="{'hover:underline md:hover:translate-x-12 md:transform md:transition md:absolute md:-left-10 md:top-0 md:p-4': listId !== null}">
+            <button @click="listId = null" class="flex items-center hover:opacity-100 focus:outline-none">
+                <span v-if="listId !== null" class="pr-4">{{ icon('left-arrow', 'h-6 text-gray-700 pb-1') }}</span>
+                <span class="">[[ title ]]</span>
             </button>
-            <h1>[[ title ]]</h1>
         </div> 
     </nav>
 
