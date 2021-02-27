@@ -3,10 +3,14 @@
 
 {% block body %}
 <div id="app" class="flex flex-col min-h-screen min-w-screen">
-    <h1 class="p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden">
-        <button @click="listId = null" v-if="listId !== null" class="pr-1">{{ icon('left-arrow', 'h-6 text-gray-700 pb-1') }}</button>
-        [[ title ]]
-    </h1>
+    <nav class="flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden">
+        <div :class="{'md:hover:translate-x-12 md:transform md:transition md:absolute md:-left-12 md:top-0 md:p-4 flex': listId !== null}">
+            <button @click="listId = null" v-if="listId !== null" class="px-2 md:mr-2 hover:bg-orange-100 rounded-full">
+                {{ icon('left-arrow', 'h-6 text-gray-700 pb-1') }}
+            </button>
+            <h1>[[ title ]]</h1>
+        </div> 
+    </nav>
 
     <div class="mb-4 text-2xl p-4"> </div>  <!-- Same size as the top bar -->
 
@@ -61,7 +65,7 @@
 
     const vm = Vue.createApp(App);
 
-    vm.component('shop-item', {
+    vm.component('todo-item', {
         props: ['item'],
         data() { return {
             editing: false,
@@ -93,14 +97,11 @@
             <span class="justify-self-start flex-grow">
                 <input v-if="editing" ref="input" class="pr-1 text-gray-600 w-min" v-model="editedName" @change="edit" @focusout="editing = false" :size="editedName.length" type="text"/>
                 <span v-else @click="toggleEdit" >[[ item.name ]]</span>
-<!--                <button class="text-gray-500 w-auto" @click="toggleEdit">{{ icon('pen') }}</button>-->
             </span>
-            <span class="text-right">[[ item.categ ]]</span>
         </li>
         `,
         delimiters: ['[[', ']]'],
     })
-
     vm.component('add-bar', {
         props: ['categories', 'listid'],
         emits: ['new-item'],
@@ -194,7 +195,7 @@
     <div v-for="(group, name) in shopByCateg" class="pb-4" :key="name">
         <h2 class="text-xl">[[ name ]]</h2>
         <ul>
-            <shop-item v-for="item in group" :item="item" :key="item.id"></shop-item>
+            <todo-item v-for="item in group" :item="item" :key="item.id"></todo-item>
         </ul>
     </div>
 </div>
