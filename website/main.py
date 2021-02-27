@@ -9,11 +9,9 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from starlette.responses import HTMLResponse
 
-import crud
-import models
-import shemas
+from sql_app import crud, models, shemas
 from constants import *
-from database import engine, get_db
+from sql_app.database import engine, get_db
 
 os.chdir(TOP_DIR)
 

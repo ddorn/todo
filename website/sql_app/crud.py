@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-import models, shemas
+from . import models, shemas
 
 
 def get_todo(db: Session, id: int) -> models.Todo:
