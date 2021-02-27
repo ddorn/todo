@@ -12,6 +12,7 @@
   let
     pythonEnv = python38.withPackages(ps: with ps; [
       sqlalchemy
+      alembic
       fastapi
       uvicorn
     ]);

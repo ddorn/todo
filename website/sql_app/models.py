@@ -14,6 +14,7 @@ class Todo(Base):
     name = Column(String, index=True)
     categ = Column(String, index=True)
     done = Column(Boolean, default=False)
+    important = Column(Boolean, default=False)
 
     list_id = Column(Integer, ForeignKey("todolists.id"))
     list = relationship("TodoList", back_populates='todos')

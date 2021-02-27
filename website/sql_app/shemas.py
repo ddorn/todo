@@ -13,6 +13,7 @@ class Todo(BaseModel):
     categ: str
     id: int
     done: bool
+    important: bool
 
     class Config:
         orm_mode = True
@@ -22,6 +23,7 @@ class PartialTodo(BaseModel):
     name: Optional[str]
     categ: Optional[str]
     done: Optional[bool]
+    important: Optional[bool]
 
 
 # -------- TodoLists --------- #

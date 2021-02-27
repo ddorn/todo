@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <todo-list v-else :list-id="listId" class="m-4 md:w-4/5"></todo-list>
+    <todo-list v-else :list-id="listId" class="md:w-4/5 w-full p-4"></todo-list>
 
 </div>
 
@@ -66,43 +66,6 @@
 
     const vm = Vue.createApp(App);
 
-    vm.component('todo-item', {
-        props: ['item'],
-        data() { return {
-            editing: false,
-            editedName: this.item.name,
-        }},
-        methods: {
-            toggleDone() {
-                fetch(`/api/todo/${this.item.id}`, {
-                    method: 'PATCH',
-                    body: JSON.stringify({ done: !this.item.done})
-                }).then(resp => {if (resp.ok) this.item.done = !this.item.done})
-            },
-            toggleEdit() {
-                this.editing = !this.editing;
-                if (this.editing) setTimeout(() => this.$refs.input.focus(), 1);
-            },
-            edit() {
-                fetch(`/api/todo/${this.item.id}`, {
-                    method: "PATCH",
-                    body: JSON.stringify({ name: this.editedName })
-                }).then(resp => {if (resp.ok) this.item.name = this.editedName})
-            }
-        },
-        template: `
-        <li class="py-1 px-2 flex justify-between items-center bg-white shadow my-2 rounded-md" :class="{'text-gray-500 line-through': item.done}">
-            <button @click="toggleDone" class="rounded border-2 border-orange-200 w-6 h-6 mr-4" :class="{'text-gray-300': !item.done}">
-                {{ icon('check', "h-6 pb-1") }}
-            </button>
-            <span class="justify-self-start flex-grow">
-                <input v-if="editing" ref="input" class="pr-1 text-gray-600 w-min" v-model="editedName" @change="edit" @focusout="editing = false" :size="editedName.length" type="text"/>
-                <span v-else @click="toggleEdit" >[[ item.name ]]</span>
-            </span>
-        </li>
-        `,
-        delimiters: ['[[', ']]'],
-    })
     vm.component('add-bar', {
         props: ['categories', 'listid'],
         emits: ['new-item'],
@@ -172,8 +135,11 @@
                 });
                 for (const group in groups) {
                     groups[group].sort((a, b) => {
-                        let ddone = a.done - b.done;
-                        return ddone !== 0 ? ddone : a.name > b.name ? 1 : -1;
+                        let ddone = a.done - b.done,
+                            dimportant = b.important - a.important;
+                        return ddone !== 0 ? ddone :
+                            dimportant !== 0 ? dimportant :
+                                a.name > b.name ? 1 : -1;
                     })
                 }
                 return groups;
@@ -190,8 +156,8 @@
         created() { this.updateShop(); },
         delimiters: ['[[', ']]'],
         template: `
-<div class="flex flex-col items-center">
-    <add-bar @new-item="shop.push($event)" :categories="categories" :listid="listId" class="pb-4 w-1/2"></add-bar>
+<div>
+    <add-bar @new-item="shop.push($event)" :categories="categories" :listid="listId" class="pb-4"></add-bar>
     <div class="col-w-lg w-full">
         <div v-for="(group, name) in shopByCateg" class="pb-4 inline-block w-full" :key="name">
             <h2 class="text-xl">[[ name ]]</h2>
@@ -202,6 +168,57 @@
     </div>
 </div>`,
 
+    })
+    vm.component('todo-item', {
+        props: ['item'],
+        data() { return {
+            editing: false,
+            editedName: this.item.name,
+        }},
+        methods: {
+            toggleDone() {
+                fetch(`/api/todo/${this.item.id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ done: !this.item.done})
+                }).then(resp => {if (resp.ok) this.item.done = !this.item.done})
+            },
+            toggleStar() {
+                fetch(`/api/todo/${this.item.id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ important: !this.item.important})
+                }).then(resp => {if (resp.ok) this.item.important = !this.item.important})
+            },
+            toggleEdit() {
+                this.editing = !this.editing;
+                if (this.editing) setTimeout(() => this.$refs.input.focus(), 1);
+            },
+            edit() {
+                fetch(`/api/todo/${this.item.id}`, {
+                    method: "PATCH",
+                    body: JSON.stringify({ name: this.editedName })
+                }).then(resp => {
+                    if (resp.ok) {
+                        this.item.name = this.editedName;
+                        this.editing = false;
+                    }})
+            }
+        },
+        template: `
+        <li class="py-1 px-2 flex justify-between items-center bg-white shadow my-2 rounded-md" :class="{'text-gray-500 line-through': item.done}">
+            <button @click="toggleDone" class="rounded border-2 border-orange-200 w-6 h-6 mr-4" :class="{'text-gray-300': !item.done}">
+                {{ icon('check', "h-6 pb-1") }}
+            </button>
+            <span class="justify-self-start flex-grow overflow-ellipsis">
+                <input v-if="editing" ref="input" class="pr-1 text-gray-600" v-model="editedName" @change="edit" @focusout="editing = false" :size="Math.min(27, editedName.length)" type="text"/>
+                <span v-else @click="toggleEdit" class="h-6" >[[ item.name ]]</span>
+            </span>
+            <button @click="toggleStar" class="w-6 h-6 flex-shrink-0" :class="{'text-gray-300': !item.done}">
+                <span v-if="item.important" :class="item.done ? 'text-gray-300' : 'text-orange-300'">{{ icon('star', "h-6 pb-1", True) }}</span>
+                <span v-else class="texor">{{ icon('star', "h-6 pb-1", False) }}</span>
+            </button>
+        </li>
+        `,
+        delimiters: ['[[', ']]'],
     })
     vm.mount('#app');
 </script>
