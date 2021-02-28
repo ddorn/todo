@@ -87,7 +87,7 @@
                     body: JSON.stringify(item),
                 }).then(resp => resp.json()
                     .then(data => {
-                        item.id = data.id;
+                        item = data;
                         this.$emit('new-item', item)
                         this.addName = '';
                     }))
@@ -139,7 +139,7 @@
                             dimportant = b.important - a.important;
                         return ddone !== 0 ? ddone :
                             dimportant !== 0 ? dimportant :
-                                a.name > b.name ? 1 : -1;
+                                a.name.localeCompare(b.name);
                     })
                 }
                 return groups;
@@ -161,9 +161,9 @@
     <div class="col-w-lg w-full">
         <div v-for="(group, name) in shopByCateg" class="pb-4 inline-block w-full" :key="name">
             <h2 class="text-xl">[[ name ]]</h2>
-            <ul>
+            <transition-group tag="ul" name="flip-list">
                 <todo-item v-for="item in group" :item="item" :key="item.id"></todo-item>
-            </ul>
+            </transition-group>
         </div>
     </div>
 </div>`,
