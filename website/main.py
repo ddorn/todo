@@ -3,14 +3,13 @@
 import os
 from typing import List
 
-from fastapi import APIRouter, FastAPI, HTTPException, Request, Depends
+from fastapi import APIRouter, Depends, FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from starlette.responses import HTMLResponse
+from starlette.responses import HTMLResponse, RedirectResponse
 
-from sql_app import crud, models, shemas
 from constants import *
+from sql_app import crud, models, shemas
 from sql_app.database import engine, get_db
 
 os.chdir(TOP_DIR)
@@ -18,22 +17,13 @@ os.chdir(TOP_DIR)
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
-
-
-def template(name, request, **kwargs):
-    return templates.TemplateResponse(name, {
-        'request': request,
-        **kwargs
-    })
 
 
 # ####################### User pages ####################### #
 
 @app.get("/", response_class=HTMLResponse, tags=['Webpages'])
-def home(request: Request):
-    return template('home.html', request, title="Listes de Diego", DEV=DEV)
+def home():
+    return RedirectResponse("/index.html")
 
 
 # ####################### API ####################### #
@@ -93,3 +83,5 @@ api = APIRouter(prefix='/api')
 api.include_router(list_router)
 api.include_router(todo_router)
 app.include_router(api)
+# This needs to be last, otherwise takes precedence.
+app.mount("/", StaticFiles(directory="frontend/dist"), name="static")

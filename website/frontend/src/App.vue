@@ -1,0 +1,96 @@
+<template>
+  <div
+    class="bg-gray-50 text-black relative flex flex-col min-h-screen min-w-screen items-center"
+  >
+    <nav
+      class="flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden"
+    >
+      <div
+        :class="{
+          'hover:underline md:hover:translate-x-14 md:transform md:transition md:absolute md:-left-14 md:top-0 md:px-8 md:py-4':
+            listId !== null
+        }"
+      >
+        <button
+          @click="setListId(null)"
+          class="flex items-center hover:opacity-100 focus:outline-none"
+        >
+          <span v-if="listId !== null" class="pr-2 md:pr-4"
+            >{ icon('left-arrow', 'h-6 text-gray-700 pb-1') }</span
+          >
+          <span @click="updateLists()" class="">{{ title }}</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="mb-4 text-2xl p-4"></div>
+    <!-- Same size as the top bar -->
+
+    <div
+      v-if="listId === null"
+      class="p-4 w-full h-full flex flex-col md:w-1/2"
+    >
+      <div class="flex flex-col space-y-4 px-4 self-center">
+        <a
+          @click="setListId(list.id)"
+          v-for="list in lists"
+          :key="list.id"
+          class="cursor-pointer p-4 w-full rounded-xl shadow-lg bg-orange-100 hover:scale-105 transform transition"
+        >
+          <div class="text-xl px-4">{{ list.title }}</div>
+          <p class="px-4 text-gray-700">{{ list.description }}</p>
+        </a>
+      </div>
+    </div>
+
+    <todo-list v-else :list-id="listId" class="md:w-4/5 w-full p-4"></todo-list>
+  </div>
+</template>
+
+<script>
+import TodoList from "./components/TodoList.vue";
+
+export default {
+  name: "App",
+  components: {
+    TodoList
+  },
+  data() {
+    return {
+      lists: [],
+      listId: null
+    };
+  },
+  computed: {
+    title() {
+      return this.listId === null
+        ? "Listes de Diego"
+        : this.lists.find(l => l.id === this.listId).title;
+    }
+  },
+  methods: {
+    setListId(value) {
+      this.listId = value;
+      if (value !== null) {
+        document.title = this.lists.find(l => l.id === value).title;
+      } else {
+        document.title = "Listes de Diego";
+      }
+    },
+    updateLists() {
+      fetch("/api/list/").then(resp => {
+        if (resp.ok) {
+          resp.json().then(d => (this.lists = d));
+        } else {
+          resp.json().then(d => console.log(d));
+        }
+      });
+    }
+  },
+  created() {
+    this.updateLists();
+  }
+};
+</script>
+
+<style></style>
