@@ -5,9 +5,9 @@
 <div id="app" class="flex flex-col min-h-screen min-w-screen items-center">
     <nav class="flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden">
         <div :class="{'hover:underline md:hover:translate-x-14 md:transform md:transition md:absolute md:-left-14 md:top-0 md:px-8 md:py-4': listId !== null}">
-            <button @click="listId = null" class="flex items-center hover:opacity-100 focus:outline-none">
+            <button @click="setListId(null)" class="flex items-center hover:opacity-100 focus:outline-none">
                 <span v-if="listId !== null" class="pr-2 md:pr-4">{{ icon('left-arrow', 'h-6 text-gray-700 pb-1') }}</span>
-                <span class="">[[ title ]]</span>
+                <span @click="updateLists()" class="">[[ title ]]</span>
             </button>
         </div> 
     </nav>
@@ -16,7 +16,7 @@
 
     <div v-if="listId === null" class="p-4 w-full h-full flex flex-col md:w-1/2">
         <div class="flex flex-col space-y-4 px-4 self-center">
-            <a @click="listId = list.id" v-for="list in lists" class="cursor-pointer p-4 w-full rounded-xl shadow-lg bg-orange-100 hover:scale-105 transform transition">
+            <a @click="setListId(list.id)" v-for="list in lists" class="cursor-pointer p-4 w-full rounded-xl shadow-lg bg-orange-100 hover:scale-105 transform transition">
                 <div class="text-xl px-4">[[ list.title ]]</div>
                 <p class="px-4 text-gray-700">[[ list.description ]]</p>
             </a>
@@ -49,6 +49,14 @@
             },
         },
         methods: {
+            setListId(value) {
+                this.listId = value;
+                if (value !== null) {
+                    document.title = this.lists.find(l => l.id === value).title;
+                } else {
+                    document.title = "Listes de Diego";
+                }
+            },
             updateLists() {
                 fetch("/api/list/").then(resp => {
                     if (resp.ok) {
@@ -162,7 +170,7 @@
         <div v-for="(group, name) in shopByCateg" class="pb-4 inline-block w-full" :key="name">
             <h2 class="text-xl">[[ name ]]</h2>
             <transition-group tag="ul" name="flip-list">
-                <todo-item v-for="item in group" :item="item" :key="item.id"></todo-item>
+                <todo-item v-for="item in group" :item="item" :key="item.id" @error="console.log(event)"></todo-item>
             </transition-group>
         </div>
     </div>
@@ -171,22 +179,32 @@
     })
     vm.component('todo-item', {
         props: ['item'],
+        emits: ['error'],
         data() { return {
             editing: false,
             editedName: this.item.name,
+            isOpen: false,
         }},
         methods: {
             toggleDone() {
+                this.item.done = !this.item.done;
                 fetch(`/api/todo/${this.item.id}`, {
                     method: 'PATCH',
                     body: JSON.stringify({ done: !this.item.done})
-                }).then(resp => {if (resp.ok) this.item.done = !this.item.done})
+                }).then(resp => {if (!resp.ok) {
+                    this.item.done = !this.item.done;  // Toggle back on error
+                    this.$emit('error', `Could not mark "${this.item.name}" as done`)
+                }})
             },
             toggleStar() {
+                this.item.important = !this.item.important;
                 fetch(`/api/todo/${this.item.id}`, {
                     method: 'PATCH',
                     body: JSON.stringify({ important: !this.item.important})
-                }).then(resp => {if (resp.ok) this.item.important = !this.item.important})
+                }).then(resp => {if (!resp.ok) {
+                    this.item.important = !this.item.important;  // Toggle back on error
+                    this.$emit('error', `Could not mark "${this.item.name}" as important`)
+                }})
             },
             toggleEdit() {
                 this.editing = !this.editing;

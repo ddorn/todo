@@ -33,7 +33,7 @@ def template(name, request, **kwargs):
 
 @app.get("/", response_class=HTMLResponse, tags=['Webpages'])
 def home(request: Request):
-    return template('home.html', request, title="Liste de courses")
+    return template('home.html', request, title="Listes de Diego", DEV=DEV)
 
 
 # ####################### API ####################### #
