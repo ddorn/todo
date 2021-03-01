@@ -48,46 +48,49 @@ export default {
   },
   methods: {
     toggleDone() {
-      this.item.done = !this.item.done;
-      fetch(`/api/todo/${this.item.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ done: !this.item.done })
-      }).then(resp => {
-        if (!resp.ok) {
-          this.item.done = !this.item.done; // Toggle back on error
-          this.$emit("error", `Could not mark "${this.item.name}" as done`);
-        }
-      });
+      this.$emit("toggle-done");
+      // this.item.done = !this.item.done;
+      // fetch(`/api/todo/${this.item.id}`, {
+      //   method: "PATCH",
+      //   body: JSON.stringify({ done: !this.item.done })
+      // }).then(resp => {
+      //   if (!resp.ok) {
+      //     this.item.done = !this.item.done; // Toggle back on error
+      //     this.$emit("error", `Could not mark "${this.item.name}" as done`);
+      //   }
+      // });
     },
     toggleStar() {
-      this.item.important = !this.item.important;
-      fetch(`/api/todo/${this.item.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ important: !this.item.important })
-      }).then(resp => {
-        if (!resp.ok) {
-          this.item.important = !this.item.important; // Toggle back on error
-          this.$emit(
-            "error",
-            `Could not mark "${this.item.name}" as important`
-          );
-        }
-      });
+      this.$emit("toggle-star");
+      // this.item.important = !this.item.important;
+      // fetch(`/api/todo/${this.item.id}`, {
+      //   method: "PATCH",
+      //   body: JSON.stringify({ important: !this.item.important })
+      // }).then(resp => {
+      //   if (!resp.ok) {
+      //     this.item.important = !this.item.important; // Toggle back on error
+      //     this.$emit(
+      //       "error",
+      //       `Could not mark "${this.item.name}" as important`
+      //     );
+      //   }
+      // });
     },
     toggleEdit() {
       this.editing = !this.editing;
       if (this.editing) setTimeout(() => this.$refs.input.focus(), 1);
     },
     edit() {
-      fetch(`/api/todo/${this.item.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ name: this.editedName })
-      }).then(resp => {
-        if (resp.ok) {
-          this.item.name = this.editedName;
-          this.editing = false;
-        }
-      });
+      this.$emit("set-name", this.editedName);
+      this.editing = false;
+      // fetch(`/api/todo/${this.item.id}`, {
+      //   method: "PATCH",
+      //   body: JSON.stringify({ name: this.editedName })
+      // }).then(resp => {
+      //   if (resp.ok) {
+      //     this.item.name = this.editedName;
+      //   }
+      // });
     }
   }
 };

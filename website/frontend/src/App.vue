@@ -2,28 +2,21 @@
   <div
     class="bg-gray-50 text-black relative flex flex-col min-h-screen min-w-screen items-center"
   >
-    <nav
-      class="flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden"
-    >
-      <div
-        :class="{
-          'hover:underline md:hover:translate-x-14 md:transform md:transition md:absolute md:-left-14 md:top-0 md:px-8 md:py-4':
-            listId !== null
-        }"
-      >
+    <nav class="flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden" >
+      <div :class="{
+          'hover:underline md:hover:translate-x-14 md:transform md:transition md:relative md:-left-14 md:px-8':
+            listId !== null }" >
         <button
           @click="setListId(null)"
-          class="flex items-center hover:opacity-100 focus:outline-none"
-        >
+          class="flex items-center hover:opacity-100 focus:outline-none" >
           <span v-if="listId !== null" class="pr-2 md:pr-4"
-            >{ icon('left-arrow', 'h-6 text-gray-700 pb-1') }</span
-          >
+            >{ icon('left-arrow', 'h-6 text-gray-700 pb-1') }</span >
           <span @click="updateLists()" class="">{{ title }}</span>
         </button>
       </div>
     </nav>
 
-    <div class="mb-4 text-2xl p-4"></div>
+    <div class="mb-4 text-2xl p-4">42</div>
     <!-- Same size as the top bar -->
 
     <div
@@ -49,6 +42,8 @@
 
 <script>
 import TodoList from "./components/TodoList.vue";
+
+import "./assets/index.css";
 
 export default {
   name: "App",

@@ -1,26 +1,28 @@
 <template>
-  <TodoAddBar
-    @new-item="shop.push($event)"
-    :categories="categories"
-    :listid="listId"
-    class="pb-4"
-  ></TodoAddBar>
+  <div>
+    <TodoAddBar
+      @new-item="shop.push($event)"
+      :categories="categories"
+      :listid="listId"
+      class="pb-4"
+    ></TodoAddBar>
 
-  <div class="col-w-lg w-full">
-    <div
-      v-for="(group, name) in shopByCateg"
-      class="pb-4 inline-block w-full"
-      :key="name"
-    >
-      <h2 class="text-xl">{{ name }}</h2>
-      <transition-group tag="ul" name="flip-list">
-        <TodoItem
-          v-for="item in group"
-          :item="item"
-          :key="item.id"
-          @error="console.log(event)"
-        ></TodoItem>
-      </transition-group>
+    <div class="col-w-lg w-full">
+      <div
+        v-for="(group, name) in shopByCateg"
+        class="pb-4 inline-block w-full"
+        :key="name"
+      >
+        <h2 class="text-xl">{{ name }}</h2>
+        <transition-group tag="ul" name="flip-list">
+          <TodoItem
+            v-for="item in group"
+            :item="item"
+            :key="item.id"
+            @error="console.log(event)"
+          ></TodoItem>
+        </transition-group>
+      </div>
     </div>
   </div>
 </template>
@@ -28,15 +30,6 @@
 <script>
 import TodoAddBar from "@/components/TodoAddBar";
 import TodoItem from "@/components/TodoItem";
-
-function newItem(name, categ) {
-  return {
-    name,
-    categ,
-    done: false,
-    id: null
-  };
-}
 
 export default {
   name: "TodoList",
