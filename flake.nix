@@ -25,16 +25,16 @@
         pythonEnv
       ];
 
-      PYTHONPATH = "website";
+      PYTHONPATH = "backend";
       PORT = "8300";
 
       shellHook = ''
       function start() {
         if [ "$1" != "dev" ]
         then
-          uvicorn website.main:app --port $PORT
+          uvicorn backend.main:app --port $PORT
         else
-          DEV=true uvicorn website.main:app --port $PORT --reload
+          DEV=true uvicorn backend.main:app --port $PORT --reload
         fi
       }
       '';

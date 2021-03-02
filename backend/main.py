@@ -12,7 +12,7 @@ from constants import *
 from sql_app import crud, models, shemas
 from sql_app.database import engine, get_db
 
-os.chdir(TOP_DIR)
+os.chdir(BACKEND_DIR)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -83,5 +83,10 @@ api = APIRouter(prefix='/api')
 api.include_router(list_router)
 api.include_router(todo_router)
 app.include_router(api)
-# This needs to be last, otherwise takes precedence.
-app.mount("/", StaticFiles(directory="frontend/dist"), name="static")
+
+try:
+    # This needs to be last, otherwise takes precedence.
+    app.mount("/", StaticFiles(directory=FRONTEND_BUILD), name="static")
+except RuntimeError as e:
+    print(f"Cannot find the frontend build in '{FRONTEND_BUILD}'.")
+    print("The backend will run, but will not serve the frontend.")
