@@ -5,10 +5,10 @@
   >
     <button
       @click="toggleDone"
-      class="rounded border-2 border-orange-200 w-6 h-6 mr-4"
+      class="flex rounded border-2 border-orange-200 w-6 h-6 mr-4"
       :class="{ 'text-gray-300': !item.done }"
     >
-      { icon('check', "h-6 pb-1") }
+      <Icon name="check" class="h-6"></Icon>
     </button>
     <span class="justify-self-start flex-grow overflow-ellipsis">
       <input
@@ -23,20 +23,22 @@
       />
       <span v-else @click="toggleEdit" class="h-6">{{ item.name }}</span>
     </span>
-    <button @click="toggleStar" class="w-6 h-6 flex-shrink-0 text-gray-300">
-      <span
-        v-if="item.important"
-        :class="item.done ? 'text-gray-300' : 'text-orange-300'"
-        >{ icon('star', "h-6 pb-1", True) }</span
-      >
-      <span v-else class="texor">{ icon('star', "h-6 pb-1", False) }</span>
+    <button @click="toggleStar" class="flex w-6 h-6 flex-shrink-0 text-gray-300">
+      <Icon
+          v-if="item.important"
+          :class="item.done ? 'text-gray-300' : 'text-orange-300'"
+          name="star" class="h-6" fill="currentColor">
+      </Icon>
+      <Icon v-else name="star" class="h-6"></Icon>
     </button>
   </li>
 </template>
 
 <script>
+import Icon from "@/components/Icon";
 export default {
   name: "TodoItem",
+  components: {Icon},
   props: ["item"],
   emits: ["error"],
   data() {

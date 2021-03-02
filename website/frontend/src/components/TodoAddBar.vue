@@ -35,15 +35,17 @@
         class="rounded-r bg-orange-300 text-center"
         v-on:click="addItem"
       >
-        { icon('plus', 'h-7 px-2 py-1') }
+        <Icon name="plus" class="h-7 px-2 py-1"></Icon>
       </button>
     </div>
   </form>
 </template>
 
 <script>
+import Icon from "@/components/Icon";
 export default {
   name: "TodoAddBar",
+  components: {Icon},
   props: ["categories", "listid"],
   emits: ["new-item"],
   data() {
