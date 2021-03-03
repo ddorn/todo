@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DATE, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -15,6 +15,7 @@ class Todo(Base):
     categ = Column(String, index=True)
     done = Column(Boolean, default=False)
     important = Column(Boolean, default=False)
+    deadline = Column(Date, index=True)
 
     list_id = Column(Integer, ForeignKey("todolists.id"))
     list = relationship("TodoList", back_populates='todos')

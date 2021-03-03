@@ -1,6 +1,8 @@
+from datetime import date
 from typing import List, Optional
 
 from pydantic import BaseModel
+
 
 # -------- Todos --------- #
 
@@ -8,12 +10,14 @@ class TodoCreate(BaseModel):
     name: str
     categ: str
 
+
 class Todo(BaseModel):
     name: str
     categ: str
     id: int
     done: bool
     important: bool
+    deadline: Optional[date]
 
     class Config:
         orm_mode = True
@@ -24,6 +28,7 @@ class PartialTodo(BaseModel):
     categ: Optional[str]
     done: Optional[bool]
     important: Optional[bool]
+    deadline: Optional[date]
 
 
 # -------- TodoLists --------- #
@@ -42,6 +47,7 @@ class TodoList(BaseModel):
     class Config:
         orm_mode = True
 
+
 class TodoListMetaData(BaseModel):
     id: int
     title: str
@@ -49,4 +55,3 @@ class TodoListMetaData(BaseModel):
 
     class Config:
         orm_mode = True
-
