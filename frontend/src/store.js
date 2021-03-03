@@ -17,6 +17,17 @@ const store = {
     listId: null,
     lists: []
   }),
+
+  getList(id) {
+    if (id === undefined) {
+      id = this.state.listId;
+    }
+    return this.state.lists.find(l => l.id === id);
+  },
+  getTodo(id) {
+    return this.state.todos.find(t => t.id === id);
+  },
+
   setListId(value) {
     if (value === this.state.listId) return;
     this.state.listId = value;
@@ -106,6 +117,10 @@ const store = {
   },
   setTodoCategory(id, category) {
     this.modifyTodo(id, { categ: category });
+  },
+  setTodoDate(id, date) {
+    // Date must be an ISO date
+    this.modifyTodo(id, { deadline: date });
   }
 };
 

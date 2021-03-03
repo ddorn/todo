@@ -8,10 +8,13 @@
     ></TodoAddBar>
 
     <div class="col-w-lg w-full">
-      <div v-for="category in categories"
-           :key="category"
-           class="pb-4 inline-block w-full"
-           @dragover.prevent @drop="drop($event, category)">
+      <div
+        v-for="category in categories"
+        :key="category"
+        class="pb-4 inline-block w-full"
+        @dragover.prevent
+        @drop="drop($event, category)"
+      >
         <h2 class="text-xl">{{ category }}</h2>
         <transition-group tag="ul" name="list" class="relative">
           <TodoItem
@@ -19,7 +22,8 @@
             :item="item"
             :key="item.id"
             draggable="true"
-            @dragstart="drag($event, item)">
+            @dragstart="drag($event, item)"
+          >
           </TodoItem>
         </transition-group>
       </div>
@@ -31,6 +35,7 @@
 import { store } from "../store.js";
 import TodoAddBar from "@/components/TodoAddBar";
 import TodoItem from "@/components/TodoItem";
+import { attributes, groupBy, cmpTodos } from "../helper";
 
 export default {
   name: "TodoList",
@@ -44,27 +49,12 @@ export default {
       return store.state.todos;
     },
     shopByCateg() {
-      let groups = {};
-      Object.values(this.todos).forEach(item => {
-        if (item.categ in groups) {
-          groups[item.categ].push(item);
-        } else {
-          groups[item.categ] = [item];
-        }
-      });
-      for (const group in groups) {
-        groups[group].sort((a, b) => {
-          let ddone = a.done - b.done,
-            dimportant = b.important - a.important;
-          return ddone !== 0 ? ddone : dimportant !== 0 ? dimportant : a.name.localeCompare(b.name);
-        });
-      }
+      let groups = groupBy("categ", this.todos);
+      Object.values(groups).forEach(group => group.sort(cmpTodos));
       return groups;
     },
     categories() {
-      let set = {};
-      Object.values(this.todos).map(item => set[item.categ] = true);
-      return  Object.keys(set).sort();
+      return attributes(this.todos);
     }
   },
   methods: {
@@ -75,9 +65,9 @@ export default {
     drop(ev, category) {
       const id = ev.dataTransfer.getData("id");
       if (category !== this.todos[id].category) {
-        store.setTodoCategory(id, category)
+        store.setTodoCategory(id, category);
       }
-    },
+    }
   }
 };
 </script>

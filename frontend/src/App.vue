@@ -35,14 +35,16 @@
       </div>
     </div>
 
-    <todo-list v-else :list-id="listId" class="md:w-4/5 w-full p-4"></todo-list>
+    <!--    <todo-list v-else :list-id="listId" class="md:w-4/5 w-full p-4"></todo-list>-->
+    <todo-board v-else :list-id="listId" class="md:w-4/5 w-full p-4"></todo-board>
   </div>
 </template>
 
 <script>
 import { store } from "./store.js";
-import TodoList from "./components/TodoList.vue";
 import Icon from "@/components/Icon";
+import TodoBoard from "./components/TodoBoard";
+// import TodoList from "./components/TodoList.vue";
 
 import "./assets/index.css";
 
@@ -50,7 +52,8 @@ export default {
   name: "App",
   components: {
     Icon,
-    TodoList
+    // TodoList,
+    TodoBoard
   },
   data() {
     return {
@@ -65,17 +68,13 @@ export default {
       return store.state.listId;
     },
     title() {
-      return this.listId === null ? "Listes de Diego" : this.lists.find(l => l.id === this.listId).title;
+      return this.listId === null ? "Listes de Diego" : store.getList().title;
     }
   },
   methods: {
     setListId(value) {
       store.setListId(value);
-      if (value !== null) {
-        document.title = this.lists.find(l => l.id === value).title;
-      } else {
-        document.title = "Listes de Diego";
-      }
+      document.title = this.title;
     }
   },
   created() {
