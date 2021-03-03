@@ -1,17 +1,17 @@
 <template>
-  <div>
+  <div class="flex flex-col">
     <TodoAddBar
       @new-item="todos.push($event)"
       :categories="categories"
       :listid="listId"
-      class="pb-4"
+      class="pb-4 w-1/2 mx-auto h-auto"
     ></TodoAddBar>
 
-    <div class="w-full flex space-x-4 border-b mb-4">
+    <div class="w-full h-auto flex flex-shrink-0 space-x-4 border-b overflow-x-auto scrollbar-none">
       <div
         v-for="day in days"
         :key="day"
-        class="pb-4 w-1/4"
+        class="pb-4 w-72 flex-shrink-0"
         @dragover.prevent
         @drop="dropDay($event, day)"
       >
@@ -28,25 +28,28 @@
       </div>
     </div>
 
-    <div class="col-w-lg w-full">
-      <div
-        v-for="category in categories"
-        :key="category"
-        class="pb-4 inline-block w-full"
-        @dragover.prevent
-        @drop="drop($event, category)"
-      >
-        <h2 class="text-xl">{{ category }}</h2>
-        <transition-group tag="ul" name="list" class="relative">
-          <TodoItem
-            v-for="item in todosByCateg[category]"
-            :item="item"
-            :key="item.id"
-            draggable="true"
-            @dragstart="drag($event, item)"
-          >
-          </TodoItem>
-        </transition-group>
+    <div class="flex-grow flex-shrink pt-4 px-4 w-4/5 mx-auto overflow-y-scroll">
+      <div class="col-w-md col-fill-balance">
+        <div
+            v-for="category in categories"
+            :key="category"
+            class="pb-4 inline-block w-full"
+            @dragover.prevent
+            @drop="drop($event, category)"
+        >
+          <h2 class="text-xl">{{ category }}</h2>
+          <transition-group tag="ul" name="list" class="relative">
+            <TodoItem
+                v-for="item in todosByCateg[category]"
+                :item="item"
+                :key="item.id"
+                draggable="true"
+                @dragstart="drag($event, item)"
+            >
+            </TodoItem>
+          </transition-group>
+        </div>
+
       </div>
     </div>
   </div>
@@ -69,7 +72,7 @@ export default {
       firstDay: DateTime.now()
         .startOf("day")
         .minus({ days: 1 }),
-      daysVisible: 4
+      daysVisible: 10
     };
   },
   computed: {

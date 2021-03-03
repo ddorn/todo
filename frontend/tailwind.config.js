@@ -51,6 +51,10 @@ module.exports = {
       xl: "1280px"
       // '2xl': '1536px',
     },
+    minWidth: {
+      '60': '20rem',
+      '64': '21rem',
+    },
     columnWidth: {
       sm: "120px",
       md: "240px",

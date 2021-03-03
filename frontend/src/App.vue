@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-gray-50 text-black relative flex flex-col min-h-screen min-w-screen items-center">
-    <nav class="flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden">
+  <div class="h-screen w-screen bg-gray-50 text-black flex flex-col items-center overflow-x-hidden">
+    <nav class="z-50 flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden">
       <div
         :class="{
           'hover:underline md:hover:translate-x-20 md:transform md:transition md:relative md:-left-20 md:px-10':
@@ -18,10 +18,9 @@
       </div>
     </nav>
 
-    <!-- Same size as the top bar -->
-    <div class="mb-4 text-2xl p-4">42</div>
+<!--    Size of the top bar : 5rem -> 20 units. -->
 
-    <div v-if="listId === null" class="p-4 w-full h-full flex flex-col md:w-1/2">
+    <div v-if="listId === null" class="pt-20 w-full h-full flex flex-col md:w-1/2">
       <div class="flex flex-col space-y-4 px-4 self-center">
         <a
           @click="setListId(list.id)"
@@ -35,8 +34,8 @@
       </div>
     </div>
 
-    <!--    <todo-list v-else :list-id="listId" class="md:w-4/5 w-full p-4"></todo-list>-->
-    <todo-board v-else :list-id="listId" class="md:w-4/5 w-full p-4"></todo-board>
+    <todo-board v-else-if="calendarView" :list-id="listId" class="pt-20 h-full flex-grow w-full flex-shrink"></todo-board>
+    <todo-list v-else :list-id="listId" class="pt-20 h-full md:w-4/5 w-full p-4"></todo-list>
   </div>
 </template>
 
@@ -44,7 +43,7 @@
 import { store } from "./store.js";
 import Icon from "@/components/Icon";
 import TodoBoard from "./components/TodoBoard";
-// import TodoList from "./components/TodoList.vue";
+import TodoList from "./components/TodoList.vue";
 
 import "./assets/index.css";
 
@@ -52,11 +51,12 @@ export default {
   name: "App",
   components: {
     Icon,
-    // TodoList,
+    TodoList,
     TodoBoard
   },
   data() {
     return {
+      calendarView: false,
       state: store.state
     };
   },

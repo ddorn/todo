@@ -54,7 +54,7 @@ export default {
       return groups;
     },
     categories() {
-      return attributes(this.todos);
+      return attributes('categ', this.todos);
     }
   },
   methods: {
