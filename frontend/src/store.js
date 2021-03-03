@@ -76,7 +76,7 @@ const store = {
   },
 
   modifyTodo(id, changes) {
-    console.log(changes);
+    if (this.debug) console.log("modifyTodo:", id, changes);
     let item = this.state.todos[id];
     // backup changes
     let previous = {};

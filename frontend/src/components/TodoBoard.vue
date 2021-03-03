@@ -26,6 +26,7 @@
             v-for="item in todosByDay[day]"
             :key="item.id"
             :item="item"
+            show-categ="true"
             draggable="true"
             @dragstart="drag($event, item)"
           ></TodoItem>

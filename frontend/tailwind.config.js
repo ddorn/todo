@@ -76,7 +76,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ["Gilroy"]
-      }
+      },
     }
   },
   variants: {
