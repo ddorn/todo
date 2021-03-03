@@ -13,7 +13,7 @@
         >
           <Icon v-if="listId !== null" name="left-arrow" class="pr-2 md:pr-4 h-6 text-gray-700">
           </Icon>
-          <span @click="updateLists()" class="">{{ title }}</span>
+          <span class="">{{ title }}</span>
         </button>
       </div>
     </nav>
@@ -65,7 +65,7 @@ export default {
       return store.state.listId;
     },
     title() {
-      return this.listId === null ? "Listes de Diego" : this.lists[this.listId].title;
+      return this.listId === null ? "Listes de Diego" : this.lists.find(l => l.id === this.listId).title;
     }
   },
   methods: {

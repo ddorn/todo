@@ -103,6 +103,9 @@ const store = {
   },
   setTodoName(id, name) {
     this.modifyTodo(id, { name });
+  },
+  setTodoCategory(id, category) {
+    this.modifyTodo(id, { categ: category });
   }
 };
 
