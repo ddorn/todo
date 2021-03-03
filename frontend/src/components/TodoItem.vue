@@ -25,22 +25,25 @@
     </span>
     <button @click="toggleStar" class="flex w-6 h-6 flex-shrink-0 text-gray-300">
       <Icon
-          v-if="item.important"
-          :class="item.done ? 'text-gray-300' : 'text-orange-300'"
-          name="star" class="h-6" fill="currentColor">
-      </Icon>
+        v-if="item.important"
+        :class="item.done ? 'text-gray-300' : 'text-orange-300'"
+        name="star"
+        class="h-6"
+        fill="currentColor"
+      ></Icon>
       <Icon v-else name="star" class="h-6"></Icon>
     </button>
   </li>
 </template>
 
 <script>
+import { store } from "../store.js";
 import Icon from "@/components/Icon";
+
 export default {
   name: "TodoItem",
-  components: {Icon},
+  components: { Icon },
   props: ["item"],
-  emits: ["error"],
   data() {
     return {
       editing: false,
@@ -50,49 +53,19 @@ export default {
   },
   methods: {
     toggleDone() {
-      this.$emit("toggle-done");
-      // this.item.done = !this.item.done;
-      // fetch(`/api/todo/${this.item.id}`, {
-      //   method: "PATCH",
-      //   body: JSON.stringify({ done: !this.item.done })
-      // }).then(resp => {
-      //   if (!resp.ok) {
-      //     this.item.done = !this.item.done; // Toggle back on error
-      //     this.$emit("error", `Could not mark "${this.item.name}" as done`);
-      //   }
-      // });
+      store.toggleDone(this.item.id);
+      // this.$emit("toggle-done");
     },
     toggleStar() {
-      this.$emit("toggle-star");
-      // this.item.important = !this.item.important;
-      // fetch(`/api/todo/${this.item.id}`, {
-      //   method: "PATCH",
-      //   body: JSON.stringify({ important: !this.item.important })
-      // }).then(resp => {
-      //   if (!resp.ok) {
-      //     this.item.important = !this.item.important; // Toggle back on error
-      //     this.$emit(
-      //       "error",
-      //       `Could not mark "${this.item.name}" as important`
-      //     );
-      //   }
-      // });
+      store.toggleStar(this.item.id);
     },
     toggleEdit() {
       this.editing = !this.editing;
       if (this.editing) setTimeout(() => this.$refs.input.focus(), 1);
     },
     edit() {
-      this.$emit("set-name", this.editedName);
+      store.setTodoName(this.editedName);
       this.editing = false;
-      // fetch(`/api/todo/${this.item.id}`, {
-      //   method: "PATCH",
-      //   body: JSON.stringify({ name: this.editedName })
-      // }).then(resp => {
-      //   if (resp.ok) {
-      //     this.item.name = this.editedName;
-      //   }
-      // });
     }
   }
 };

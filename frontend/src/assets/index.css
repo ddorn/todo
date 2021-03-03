@@ -64,6 +64,7 @@ a {
 
 .flip-list-move {
     transition: transform 0.5s ease;
+    z-index: -1;
 }
 
 .tooltip {

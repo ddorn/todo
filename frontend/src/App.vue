@@ -1,10 +1,6 @@
 <template>
-  <div
-    class="bg-gray-50 text-black relative flex flex-col min-h-screen min-w-screen items-center"
-  >
-    <nav
-      class="flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden"
-    >
+  <div class="bg-gray-50 text-black relative flex flex-col min-h-screen min-w-screen items-center">
+    <nav class="flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden">
       <div
         :class="{
           'hover:underline md:hover:translate-x-20 md:transform md:transition md:relative md:-left-20 md:px-10':
@@ -15,23 +11,17 @@
           @click="setListId(null)"
           class="flex items-center hover:opacity-100 focus:outline-none"
         >
-          <Icon
-            v-if="listId !== null"
-            name="left-arrow"
-            class="pr-2 md:pr-4 h-6 text-gray-700"
-          ></Icon>
+          <Icon v-if="listId !== null" name="left-arrow" class="pr-2 md:pr-4 h-6 text-gray-700">
+          </Icon>
           <span @click="updateLists()" class="">{{ title }}</span>
         </button>
       </div>
     </nav>
 
-    <div class="mb-4 text-2xl p-4">42</div>
     <!-- Same size as the top bar -->
+    <div class="mb-4 text-2xl p-4">42</div>
 
-    <div
-      v-if="listId === null"
-      class="p-4 w-full h-full flex flex-col md:w-1/2"
-    >
+    <div v-if="listId === null" class="p-4 w-full h-full flex flex-col md:w-1/2">
       <div class="flex flex-col space-y-4 px-4 self-center">
         <a
           @click="setListId(list.id)"
@@ -50,10 +40,11 @@
 </template>
 
 <script>
+import { store } from "./store.js";
 import TodoList from "./components/TodoList.vue";
+import Icon from "@/components/Icon";
 
 import "./assets/index.css";
-import Icon from "@/components/Icon";
 
 export default {
   name: "App",
@@ -63,38 +54,32 @@ export default {
   },
   data() {
     return {
-      lists: [],
-      listId: null
+      state: store.state
     };
   },
   computed: {
+    lists() {
+      return store.state.lists;
+    },
+    listId() {
+      return store.state.listId;
+    },
     title() {
-      return this.listId === null
-        ? "Listes de Diego"
-        : this.lists.find(l => l.id === this.listId).title;
+      return this.listId === null ? "Listes de Diego" : this.lists[this.listId].title;
     }
   },
   methods: {
     setListId(value) {
-      this.listId = value;
+      store.setListId(value);
       if (value !== null) {
         document.title = this.lists.find(l => l.id === value).title;
       } else {
         document.title = "Listes de Diego";
       }
-    },
-    updateLists() {
-      fetch("/api/list/").then(resp => {
-        if (resp.ok) {
-          resp.json().then(d => (this.lists = d));
-        } else {
-          resp.json().then(d => console.log(d));
-        }
-      });
     }
   },
   created() {
-    this.updateLists();
+    store.fetchLists();
   }
 };
 </script>

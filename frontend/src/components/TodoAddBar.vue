@@ -11,9 +11,9 @@
       v-model="addCateg"
     >
       <option value="" disabled selected hidden>Category</option>
-      <option v-for="cat in categories" :value="cat" :key="cat">{{
-        cat
-      }}</option>
+      <option v-for="cat in categories" :value="cat" :key="cat">
+        {{ cat }}
+      </option>
       <option value="-OTHER-">Nouvelle catégorie</option>
     </select>
 
@@ -30,11 +30,7 @@
       <div class="flex w-full h-8">
         <input type="text" class="flex-grow border px-2" v-model="addName" />
       </div>
-      <button
-        type="submit"
-        class="rounded-r bg-orange-300 text-center"
-        v-on:click="addItem"
-      >
+      <button type="submit" class="rounded-r bg-orange-300 text-center" v-on:click="addItem">
         <Icon name="plus" class="h-7 px-2 py-1"></Icon>
       </button>
     </div>
@@ -43,9 +39,10 @@
 
 <script>
 import Icon from "@/components/Icon";
+import { store } from "../store";
 export default {
   name: "TodoAddBar",
-  components: {Icon},
+  components: { Icon },
   props: ["categories", "listid"],
   emits: ["new-item"],
   data() {
@@ -61,18 +58,9 @@ export default {
       let isNewCat = this.addCateg === "-OTHER-";
       let cat = isNewCat ? this.addCategAutre : this.addCateg;
       let name = this.addName;
+      this.addName = "";
       if (!cat || !name) return;
-      let item = { name, categ: cat, done: false };
-      fetch(`/api/list/${this.listid}`, {
-        method: "post",
-        body: JSON.stringify(item)
-      }).then(resp =>
-        resp.json().then(data => {
-          item = data;
-          this.$emit("new-item", item);
-          this.addName = "";
-        })
-      );
+      store.createTodo(name, cat);
       if (isNewCat) {
         this.addCateg = this.addCategAutre;
       }

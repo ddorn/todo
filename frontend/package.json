@@ -30,6 +30,11 @@
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1"
   },
+  "prettier": {
+    "jsxBracketSameLine": true,
+    "htmlWhitespaceSensitivity": "strict",
+    "printWidth": 100
+  },
   "eslintConfig": {
     "root": true,
     "env": {
