@@ -8,15 +8,19 @@
     ></TodoAddBar>
 
     <div class="col-w-lg w-full">
-      <div v-for="(group, name) in shopByCateg" class="pb-4 inline-block w-full" :key="name">
-        <h2 class="text-xl">{{ name }}</h2>
-        <transition-group tag="ul" name="flip-list">
+      <div v-for="category in categories"
+           :key="category"
+           class="pb-4 inline-block w-full"
+           @dragover.prevent @drop="drop($event, category)">
+        <h2 class="text-xl">{{ category }}</h2>
+        <transition-group tag="ul" name="list" class="relative">
           <TodoItem
-            v-for="item in group"
+            v-for="item in shopByCateg[category]"
             :item="item"
             :key="item.id"
-            @error="console.log(event)"
-          ></TodoItem>
+            draggable="true"
+            @dragstart="drag($event, item)">
+          </TodoItem>
         </transition-group>
       </div>
     </div>
@@ -58,9 +62,22 @@ export default {
       return groups;
     },
     categories() {
-      return new Set(Object.values(this.todos).map(item => item.categ));
+      let set = {};
+      Object.values(this.todos).map(item => set[item.categ] = true);
+      return  Object.keys(set).sort();
     }
   },
-  methods: {}
+  methods: {
+    drag(ev, todo) {
+      ev.dataTransfer.setData("id", todo.id);
+      ev.dataTransfer.dropEffect = "move";
+    },
+    drop(ev, category) {
+      const id = ev.dataTransfer.getData("id");
+      if (category !== this.todos[id].category) {
+        store.setTodoCategory(id, category)
+      }
+    },
+  }
 };
 </script>

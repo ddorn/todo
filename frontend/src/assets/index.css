@@ -62,10 +62,23 @@ a {
     color: var(--orange);
 }
 
-.flip-list-move {
+.list-move {
     transition: transform 0.5s ease;
-    z-index: -1;
 }
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-leave-active {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+}
+
 
 .tooltip {
     --tip-position: 50%;
