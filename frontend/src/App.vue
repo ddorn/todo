@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen w-screen bg-gray-50 text-black flex flex-col items-center overflow-x-hidden">
-    <nav class="z-50 flex p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed w-full overflow-hidden">
+    <nav class="z-50 flex items-center p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed left-0 right-0 w-full overflow-hidden">
       <div
         :class="{
           'hover:underline md:hover:translate-x-20 md:transform md:transition md:relative md:-left-20 md:px-10':
@@ -16,6 +16,11 @@
           <span class="">{{ title }}</span>
         </button>
       </div>
+      <div class="flex-grow"></div>
+      <button @click="calendarView = !calendarView" class="hover:scale-110 transform">
+        <Icon v-if="!calendarView" name="calendar" class="h-8"></Icon>
+        <Icon v-else name="board" class="h-8"></Icon>
+      </button>
     </nav>
 
 <!--    Size of the top bar : 5rem -> 20 units. -->
@@ -56,7 +61,7 @@ export default {
   },
   data() {
     return {
-      calendarView: false,
+      calendarView: true,
       state: store.state
     };
   },

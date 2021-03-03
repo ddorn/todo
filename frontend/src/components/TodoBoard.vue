@@ -7,16 +7,21 @@
       class="pb-4 w-1/2 mx-auto h-auto"
     ></TodoAddBar>
 
-    <div class="w-full h-auto flex flex-shrink-0 space-x-4 border-b overflow-x-auto scrollbar-none">
+    <div ref="calendar" class="w-full h-auto pb-4 flex flex-shrink-0 border-b overflow-x-auto scrollbar-none">
+      <button class="flex flex-col items-center justify-center w-72 flex-shrink-0 bg-gray-100 mx-2 rounded-md shadow shadow-inner">
+        <Icon name="left-arrow" class="h-16"></Icon>
+        Voir les jours précédents
+      </button>
+
       <div
         v-for="day in days"
         :key="day"
-        class="pb-4 w-72 flex-shrink-0"
+        class="p-2 w-72 flex-shrink-0 mx-2 bg-white rounded-lg shadow bg-orange-50"
         @dragover.prevent
         @drop="dropDay($event, day)"
       >
-        <h2 class="text-xl">{{ niceDate(day) }}</h2>
-        <transition-group tag="ul" name="list" class="relative">
+        <h2 class="text-xl text-center underline py-2 mb-2">{{ niceDate(day) }}</h2>
+        <transition-group tag="ul" name="list" class="relative flex flex-col space-y-1">
           <TodoItem
             v-for="item in todosByDay[day]"
             :key="item.id"
@@ -28,17 +33,17 @@
       </div>
     </div>
 
-    <div class="flex-grow flex-shrink pt-4 px-4 w-4/5 mx-auto overflow-y-scroll">
+    <div class="flex-grow flex-shrink pt-4 px-4 w-4/5 mx-auto overflow-y-auto">
       <div class="col-w-md col-fill-balance">
         <div
             v-for="category in categories"
             :key="category"
-            class="pb-4 inline-block w-full"
+            class="pb-4 inline-block w-full border-b mb-2"
             @dragover.prevent
             @drop="drop($event, category)"
         >
-          <h2 class="text-xl">{{ category }}</h2>
-          <transition-group tag="ul" name="list" class="relative">
+          <h2 class="text-xl pb-2">{{ category }}</h2>
+          <transition-group tag="ul" name="list" class="flex flex-col space-y-1 relative">
             <TodoItem
                 v-for="item in todosByCateg[category]"
                 :item="item"
@@ -56,23 +61,24 @@
 </template>
 
 <script>
-import { store } from "../store.js";
+import {store} from "../store.js";
 import TodoAddBar from "@/components/TodoAddBar";
 import TodoItem from "@/components/TodoItem";
-import {attributes, groupBy, cmpTodos, range, filterObject} from "../helper";
-import { DateTime, Settings } from "luxon";
+import Icon from "@/components/Icon";
+import {attributes, cmpTodos, filterObject, groupBy, range} from "../helper";
+import {DateTime, Settings} from "luxon";
+
 Settings.defaultLocale = "fr";
 
 export default {
   name: "TodoBoard",
-  components: { TodoItem, TodoAddBar },
+  components: { TodoItem, TodoAddBar, Icon },
   props: ["listId"],
   data() {
     return {
       firstDay: DateTime.now()
-        .startOf("day")
-        .minus({ days: 1 }),
-      daysVisible: 10
+        .startOf("week"),
+      daysVisible: 14
     };
   },
   computed: {
@@ -109,7 +115,6 @@ export default {
   },
   methods: {
     niceDate(date) {
-      console.log(date)
       const str = date.toFormat("cccc dd MMMM")
       // Capitalise first letter of words
       return str.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
@@ -128,6 +133,15 @@ export default {
       const id = ev.dataTransfer.getData("id");
       store.setTodoDate(id, day.toISODate());
     }
+  },
+  mounted() {
+    // Scroll so that today is the left-most block
+    const cal = this.$refs.calendar,
+          child = cal.children[0],
+          box = getComputedStyle(child),
+          width = child.offsetWidth + parseInt(box.marginLeft) + parseInt(box.marginRight);
+
+    cal.scrollLeft = width * -this.firstDay.diffNow("day").days;
   }
 };
 </script>

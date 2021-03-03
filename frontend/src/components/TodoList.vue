@@ -16,7 +16,7 @@
         @drop="drop($event, category)"
       >
         <h2 class="text-xl">{{ category }}</h2>
-        <transition-group tag="ul" name="list" class="relative">
+        <transition-group tag="ul" name="list" class="relative space-y-1">
           <TodoItem
             v-for="item in shopByCateg[category]"
             :item="item"

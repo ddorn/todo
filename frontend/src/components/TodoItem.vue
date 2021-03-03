@@ -1,6 +1,6 @@
 <template>
   <li
-    class="py-1 px-2 flex justify-between items-center bg-white shadow my-2 rounded-md"
+    class="py-1 px-2 flex justify-between items-center bg-white shadow rounded-md"
     :class="{ 'text-gray-500 line-through': item.done }"
   >
     <button
