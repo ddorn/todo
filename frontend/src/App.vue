@@ -3,7 +3,7 @@
     <nav class="z-50 flex items-center p-4 text-2xl bg-orange-500 shadow-lg mb-6 fixed left-0 right-0 w-full overflow-hidden">
       <div
         :class="{
-          'hover:underline md:hover:translate-x-20 md:transform md:transition md:relative md:-left-20 md:px-10':
+          'hover:underline md:hover:translate-x-12 md:transform md:transition md:relative md:-left-20 md:px-10':
             listId !== null
         }"
       >

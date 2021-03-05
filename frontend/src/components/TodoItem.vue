@@ -1,31 +1,31 @@
 <template>
   <div
-    class="py-1 px-2 flex justify-between items-center bg-white shadow rounded-md"
+    class="py-1 px-2 flex  items-center bg-white shadow rounded-md"
     :class="{ 'text-gray-500': item.done }"
   >
     <button
       @click="toggleDone"
-      class="flex rounded border-2 border-orange-200 w-6 h-6 mr-4"
+      class="flex rounded border-2 border-orange-200 w-6 h-6 mr-2"
       :class="{ 'text-gray-300': !item.done }"
     >
-      <Icon name="check" class="h-6"></Icon>
+      <Icon name="check" class="h-6 pb-0.5"></Icon>
     </button>
-    <div class="flex-grow relative">
-<!--      <div class="justify-self-start ">-->
-<!--        <input-->
-<!--            v-if="editing"-->
-<!--            ref="input"-->
-<!--            class="pr-1 text-gray-600"-->
-<!--            v-model="editedName"-->
-<!--            @change="edit"-->
-<!--            @focusout="editing = false"-->
-<!--            :size="Math.min(27, editedName.length)"-->
-<!--            type="text"-->
-<!--        />-->
-<!--        <div v-else @click="toggleEdit" class="h-6">{{ item.name }}</div>-->
-<!--      </div>-->
-      <div v-if="showCateg" class="text-xs -my-1 text-gray-400">{{ item.categ }}</div>
-      <span class="-mb-2" :class="{ 'line-through': this.item.done }">{{ item.name }}</span>
+    <div class="flex-grow relative leading-tight mr-1">
+      <div v-if="showCateg" class="text-xs -mt-1 text-gray-400">{{ item.categ }}</div>
+<!--      <span class="" :class="{ 'line-through': this.item.done }">{{ item.name }}</span>-->
+      <div class="justify-self-start">
+        <input
+            v-if="editing"
+            ref="input"
+            class="text-gray-600 w-full"
+            v-model="editedName"
+            @change="edit"
+            @focusout="editing = false"
+            type="text"
+        />
+        <div v-else :class="{ 'line-through': this.item.done }"
+             @click="toggleEdit" class="">{{ item.name }}</div>
+    </div>
     </div>
     <button @click="toggleStar" class="flex w-6 h-6 flex-shrink-0 text-gray-300">
       <Icon
