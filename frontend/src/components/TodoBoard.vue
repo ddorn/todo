@@ -133,8 +133,10 @@ export default {
     },
     drop(ev, category) {
       const id = ev.dataTransfer.getData("id");
-      if (category !== this.todos[id].category) {
+      if (category !== this.todos[id].categ) {
         store.setTodoCategory(id, category);
+      } else if (this.todos[id].deadline !== null) {
+        store.setTodoDate(id, null);
       }
     },
     dropDay(ev, day) {

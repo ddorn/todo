@@ -119,7 +119,7 @@ const store = {
     this.modifyTodo(id, { categ: category });
   },
   setTodoDate(id, date) {
-    // Date must be an ISO date
+    // Date must be an ISO date in a string or null
     this.modifyTodo(id, { deadline: date });
   }
 };
