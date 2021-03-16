@@ -31,7 +31,7 @@ export function filterObject(obj, f) {
 export function cmpTodos(a, b) {
   let ddone = a.done - b.done,
     dimportant = b.important - a.important;
-  return ddone || dimportant || a.name.localeCompare(b.name);
+  return ddone || dimportant || a.categ.localeCompare(b.categ) || a.name.localeCompare(b.name);
 }
 
 export function range(length) {

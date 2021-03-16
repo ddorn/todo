@@ -29,6 +29,13 @@
       PORT = "8300";
 
       shellHook = ''
+      echo
+      echo "You can setup the server for developpement by running:"
+      echo
+      echo -e "    \033[35mstart dev&"
+      echo -e "    cd frontend && npm run serve\033[m"
+      echo
+
       function start() {
         if [ "$1" != "dev" ]
         then

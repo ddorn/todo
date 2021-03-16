@@ -8,7 +8,8 @@
     ></TodoAddBar>
 
     <div ref="calendar" class="w-full h-auto pb-4 flex flex-shrink-0 border-b overflow-x-auto scrollbar-none">
-      <button class="flex flex-col items-center justify-center w-72 flex-shrink-0 bg-gray-100 mx-2 rounded-md shadow shadow-inner">
+      <button class="flex flex-col items-center justify-center w-72 flex-shrink-0 bg-gray-100 mx-2 rounded-md shadow shadow-inner"
+        @click="seeMore(-3)">
         <Icon name="left-arrow" class="h-16"></Icon>
         Voir les jours précédents
       </button>
@@ -82,6 +83,7 @@ export default {
   data() {
     return {
       firstDay: DateTime.now()
+          .minus({days: 1})
         .startOf("week"),
       daysVisible: 14
     };
@@ -119,6 +121,10 @@ export default {
     },
   },
   methods: {
+    seeMore(days) {
+      this.firstDay = this.firstDay.plus({ days});
+      this.daysVisible += Math.abs(days);
+    },
     niceDate(date) {
       const str = date.toFormat("cccc dd MMMM")
       // Capitalise first letter of words
