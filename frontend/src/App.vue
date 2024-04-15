@@ -61,7 +61,7 @@ export default {
   },
   data() {
     return {
-      calendarView: true,
+      calendarView: false,
       state: store.state
     };
   },
